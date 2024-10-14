@@ -1,0 +1,47 @@
+server:
+  port: ${SERVER_PORT}
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: INFO
+
+spring:
+  mvc:
+    async:
+      request-timeout: 5m
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url:  ${DB_USER_URL}
+    username: ${DB_USER_NAME}
+    password: ${DB_USER_PASSWORD}
+  jpa:
+    #    generate-ddl: false
+    show-sql: true
+    database: mysql
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+
+      ddl-auto: update
+  profiles:
+    active: prod
+
+jwt:
+  expiration_time: 86400000 #1일
+  secret: ${JWT_SECRET}
+
+minio:
+  url: ${MINIO_SERVER_URL}
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey:  ${MINIO_PASSWORD}
+  bucketName: ${MINIO_BUCKET_NAME}
+ai:
+  server:
+    url: ${AI_SERVER_URL}

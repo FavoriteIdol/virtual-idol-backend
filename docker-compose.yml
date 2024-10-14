@@ -1,0 +1,67 @@
+
+services:
+  db:
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: virtual
+      MYSQL_USER: ohgiraffers
+      MYSQL_PASSWORD: ohgiraffers
+      MYSQL_SSL_CA: ""
+      MYSQL_SSL_CERT: ""
+      MYSQL_SSL_KEY: ""
+      TZ: "Asia/Seoul"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+
+#  minio:
+#    image: minio/minio:latest
+#    container_name: minio
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    environment:
+#      MINIO_ROOT_USER: MY-USER
+#      MINIO_ROOT_PASSWORD: MY-PASSWORD
+#    command: server /data --console-address ":9001"
+#    volumes:
+#      - minio-data:/data
+
+#  app:
+#    build: .
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SERVER_PORT: 8080
+#      DB_USER_URL: jdbc:mysql://db:3306/midnight?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+#      DB_USER_NAME: ohgiraffers
+#      DB_USER_PASSWORD: ohgiraffers
+#      JWT_SECRET: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+#      MINIO_SERVER_URL: http://172.16.16.169:9000
+#      MINIO_ACCESS_KEY: MY-USER
+#      MINIO_PASSWORD: MY-PASSWORD
+#      MINIO_BUCKET_NAME: midnight
+#      AI_SERVER_URL: http://fastapi_app:8000/analyze
+#    depends_on:
+#      - db
+#      - minio
+
+#  fastapi_app:
+#    build:
+#      context: .
+#      dockerfile: DockerfileAI
+#    ports:
+#      - "8000:8000"
+#    environment:
+#      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+
+volumes:
+  mysql-data:
+  grafana-storage:
+  minio-data:
+  mc-config:
