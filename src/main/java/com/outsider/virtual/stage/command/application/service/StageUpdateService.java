@@ -4,6 +4,7 @@ import com.outsider.virtual.stage.command.domain.aggregate.Stage;
 import com.outsider.virtual.stage.command.domain.repository.StageRepository;
 import com.outsider.virtual.stage.command.application.dto.StageUpdateDTO;
 import com.outsider.virtual.stage.command.application.mapper.StageUpdateMapper;
+import com.outsider.virtual.user.exception.NotMineException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,10 +18,13 @@ public class StageUpdateService {
         this.stageUpdateMapper = stageUpdateMapper;
     }
 
-    public void update(Long id,StageUpdateDTO dto) {
+    public void update( Long userId,Long id,StageUpdateDTO dto) {
         Stage entity = stageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Stage not found"));
-
+        if(!entity.getUserId().equals(userId))
+        {
+            throw new NotMineException();
+        }
         // MapStruct 매퍼를 사용하여 엔티티 필드 업데이트
         stageUpdateMapper.updateStageFromDto(dto, entity);
         stageRepository.save(entity);

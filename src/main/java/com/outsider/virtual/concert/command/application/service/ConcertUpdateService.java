@@ -1,8 +1,11 @@
 package com.outsider.virtual.concert.command.application.service;
 
+import com.outsider.virtual.concert.command.application.mapper.ConcertUpdateMapper;
 import com.outsider.virtual.concert.command.domain.aggregate.Concert;
 import com.outsider.virtual.concert.command.domain.repository.ConcertRepository;
 import com.outsider.virtual.concert.command.application.dto.ConcertUpdateDTO;
+import com.outsider.virtual.user.exception.NotExistException;
+import com.outsider.virtual.user.exception.NotMineException;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -10,30 +13,19 @@ import java.util.Optional;
 public class ConcertUpdateService {
 
     private final ConcertRepository concertRepository;
-
-    public ConcertUpdateService(ConcertRepository concertRepository) {
+    private final ConcertUpdateMapper concertUpdateMapper;
+    public ConcertUpdateService(ConcertRepository concertRepository, ConcertUpdateMapper concertUpdateMapper) {
         this.concertRepository = concertRepository;
+        this.concertUpdateMapper = concertUpdateMapper;
     }
 
-    public void update(ConcertUpdateDTO dto) {
-        Optional<Concert> optionalEntity = concertRepository.findById(dto.getId());
-        if (optionalEntity.isPresent()) {
-            Concert entity = optionalEntity.get();
-            entity.setName(dto.getName());
-            concertRepository.save(entity);
-        } else {
-            // 예외 처리 (엔티티를 찾을 수 없는 경우)
-            throw new RuntimeException("Concert not found");
+    public void update(Long userId,Long id , ConcertUpdateDTO dto) {
+        Concert entity = concertRepository.findById(id).orElseThrow(NotExistException::new);
+        if(!entity.getUserId().equals(userId))
+        {
+            throw new NotMineException();
         }
-    }
-
-
-
-    // DTO -> Entity 변환 (필요 시)
-    public Concert convertToEntity(ConcertUpdateDTO dto) {
-        Concert entity = new Concert();
-        entity.setId(dto.getId());
-        entity.setName(dto.getName());
-        return entity;
+        concertUpdateMapper.toEntity(dto,entity);
+        concertRepository.save(entity);
     }
 }

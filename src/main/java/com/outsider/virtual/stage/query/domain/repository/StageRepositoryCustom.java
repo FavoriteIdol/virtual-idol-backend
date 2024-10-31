@@ -6,4 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface StageRepositoryCustom {
     Page<StageDTO> findAllStagesWithUsers(Pageable pageable);
+    Page<StageDTO> findStagesByUserId(Long userId, Pageable pageable);
 }

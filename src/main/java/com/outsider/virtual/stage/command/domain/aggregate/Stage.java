@@ -1,27 +1,27 @@
 package com.outsider.virtual.stage.command.domain.aggregate;
 
+import com.outsider.virtual.util.BaseEntity;
 import jakarta.persistence.*;
 
 @Entity
-public class Stage {
+public class Stage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    private String img;
+
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private TerrainType terrain; // 무대의 지형 설정 (예: 맨땅, 바다, 구름)
+    private Integer terrain; // 무대의 지형 설정 (예: 맨땅, 바다, 구름)
 
-    @Enumerated(EnumType.STRING)
-    private SkyType sky; // 무대의 스카이 설정 (예: 맑음, 흐림, 밤하늘 등)
+    private Integer sky; // 무대의 스카이 설정 (예: 맑음, 흐림, 밤하늘 등)
 
-    @Enumerated(EnumType.STRING)
-    private ThemeType theme; // 무대의 테마 설정 (예: 사막, 지형, 우주 등)
+    private Integer theme; // 무대의 테마 설정 (예: 사막, 지형, 우주 등)
 
-    @Enumerated(EnumType.STRING)
-    private SpecialEffectType specialEffect; // 무대의 특수효과 설정 (예: 눈, 비, 불꽃 등)
+    private Integer specialEffect; // 무대의 특수효과 설정 (예: 눈, 비, 불꽃 등)
 
     private Long userId; // 제작자 이름
 
@@ -29,7 +29,7 @@ public class Stage {
     public Stage() {}
 
     // 모든 필드를 포함한 생성자
-    public Stage(String name, TerrainType terrain, SkyType sky, ThemeType theme, SpecialEffectType specialEffect, Long userId) {
+    public Stage(String name, Integer terrain, Integer sky, Integer theme, Integer specialEffect, Long userId) {
         this.name = name;
         this.terrain = terrain;
         this.sky = sky;
@@ -55,35 +55,35 @@ public class Stage {
         this.name = name;
     }
 
-    public TerrainType getTerrain() {
+    public Integer getTerrain() {
         return terrain;
     }
 
-    public void setTerrain(TerrainType terrain) {
+    public void setTerrain(Integer terrain) {
         this.terrain = terrain;
     }
 
-    public SkyType getSky() {
+    public Integer getSky() {
         return sky;
     }
 
-    public void setSky(SkyType sky) {
+    public void setSky(Integer sky) {
         this.sky = sky;
     }
 
-    public ThemeType getTheme() {
+    public Integer getTheme() {
         return theme;
     }
 
-    public void setTheme(ThemeType theme) {
+    public void setTheme(Integer theme) {
         this.theme = theme;
     }
 
-    public SpecialEffectType getSpecialEffect() {
+    public Integer getSpecialEffect() {
         return specialEffect;
     }
 
-    public void setSpecialEffect(SpecialEffectType specialEffect) {
+    public void setSpecialEffect(Integer specialEffect) {
         this.specialEffect = specialEffect;
     }
 
@@ -93,6 +93,13 @@ public class Stage {
 
     public void setUserId(Long creatorName) {
         this.userId = creatorName;
+    }
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     @Override

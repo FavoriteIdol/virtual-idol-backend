@@ -17,10 +17,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -30,15 +34,14 @@ public class SecurityConfig {
 
 
     private final JwtUtil jwtUtil;
-    private final CustomUserService customUserService;
     private final UserCommandRepository userCommandRepository;
     private final GetOrFullAuthorizationManager customAuthorizationManager;
-
-    public SecurityConfig( JwtUtil jwtUtil, CustomUserService customUserService, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager) {
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    public SecurityConfig(JwtUtil jwtUtil, UserCommandRepository userMapper, GetOrFullAuthorizationManager customAuthorizationManager, CustomAccessDeniedHandler accessDeniedHandler) {
         this.jwtUtil = jwtUtil;
-        this.customUserService = customUserService;
         this.userCommandRepository = userMapper;
         this.customAuthorizationManager = customAuthorizationManager;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -50,42 +53,40 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-
+                .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
-//                        .requestMatchers("/**").access(customAuthorizationManager)
+//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                        .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable
-                ).
-                httpBasic(AbstractHttpConfigurer::disable)
-                .addFilterBefore(new JwtAuthFilter(customUserService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                )
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .exceptionHandling(
+                        handler->handler
+                                .accessDeniedHandler(accessDeniedHandler) // 403 발생 시 커스텀 핸들러 사용
+                )
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 
 
         return http.build();
     }
-
-
-
     @Bean
-    public CorsFilter corsFilter() {
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://master-of-prediction.shop:3334");
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://*.google.com");
-        config.addAllowedOrigin("https://lh3.googleusercontent.com");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://monitor.master-of-prediction.shop:3001");
-        config.addAllowedOrigin("https://monitor.master-of-prediction.shop");
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("*"));
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 

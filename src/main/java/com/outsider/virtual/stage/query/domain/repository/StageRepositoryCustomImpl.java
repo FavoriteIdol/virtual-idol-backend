@@ -51,5 +51,33 @@ public class StageRepositoryCustomImpl implements StageRepositoryCustom {
 
         return new PageImpl<>(results, pageable, total);
     }
+    @Override
+    public Page<StageDTO> findStagesByUserId(Long userId, Pageable pageable) {
+        QStage stage = QStage.stage;
+        QUser user = QUser.user;
 
+        // Fetch the Stage entities owned by the specified user
+        List<Tuple> tuples = queryFactory
+                .select(stage, user)
+                .from(stage)
+                .leftJoin(user).on(stage.userId.eq(user.id))
+                .where(user.id.eq(userId)) // 필터링 조건
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // Map Stage and User entities to StageDTO using MapStruct
+        List<StageDTO> results = tuples.stream()
+                .map(tuple -> stageMapper.toStageDTO(tuple.get(stage), tuple.get(user)))
+                .collect(Collectors.toList());
+
+        long total = queryFactory
+                .select(stage.count())
+                .from(stage)
+                .leftJoin(user).on(stage.userId.eq(user.id))
+                .where(user.id.eq(userId)) // 필터링 조건
+                .fetchOne();
+
+        return new PageImpl<>(results, pageable, total);
+    }
 }

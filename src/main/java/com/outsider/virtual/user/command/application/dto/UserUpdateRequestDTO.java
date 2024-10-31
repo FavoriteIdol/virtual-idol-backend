@@ -10,7 +10,4 @@ public class UserUpdateRequestDTO {
     private String email;
     private String password;
     private String userName;
-    private Integer age;
-    private Gender gender;
-    private Location location;
 }

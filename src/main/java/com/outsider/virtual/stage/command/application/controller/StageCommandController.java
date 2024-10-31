@@ -1,5 +1,6 @@
 package com.outsider.virtual.stage.command.application.controller;
 
+import com.outsider.virtual.concert.query.application.dto.CreateResponseDTO;
 import com.outsider.virtual.stage.command.application.service.StageCreateService;
 import com.outsider.virtual.stage.command.application.service.StageUpdateService;
 import com.outsider.virtual.stage.command.application.service.StageDeleteService;
@@ -8,8 +9,10 @@ import com.outsider.virtual.stage.command.application.dto.StageUpdateDTO;
 import com.outsider.virtual.stage.command.application.dto.StageDeleteDTO;
 import com.outsider.virtual.user.command.infrastructure.service.CustomUserDetail;
 import com.outsider.virtual.user.dto.CustomUserInfoDTO;
+import com.outsider.virtual.user.exception.NotAuthenticationException;
 import com.outsider.virtual.util.UserId;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,17 +46,10 @@ public class StageCommandController {
             @ApiResponse(responseCode = "400", description = "입력 데이터가 잘못되었습니다.")
     })
     @PostMapping
-    public ResponseEntity<String> register(@UserId CustomUserInfoDTO userId, @RequestBody StageCreateDTO dto) {
-        if(userId!=null)
-        {
-            stageCreateService.register(userId.getUserId(), dto);
-
-        }else
-        {
-            throw new RuntimeException("인증 이후 가능합니다.");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("무대가 성공적으로 생성되었습니다."); // 성공 메시지를 포함한 응답
+    public ResponseEntity<CreateResponseDTO> register(@Parameter(hidden = true) @UserId CustomUserInfoDTO userId, @RequestBody StageCreateDTO dto) {
+        Long stageId= stageCreateService.register(userId.getUserId(), dto);
+        CreateResponseDTO responseDTO = new CreateResponseDTO("성공적으로 생성되었습니다.", stageId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @Operation(summary = "기존 무대 수정", description = "지정된 ID의 기존 무대 정보를 업데이트합니다.")
@@ -64,9 +60,10 @@ public class StageCommandController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<String> update(
+            @Parameter(hidden = true) @UserId CustomUserInfoDTO customUserInfoDTO,
             @PathVariable Long id,
             @RequestBody StageUpdateDTO dto) {
-        stageUpdateService.update(id,dto);
+        stageUpdateService.update(customUserInfoDTO.getUserId(),id,dto);
         return ResponseEntity.ok("무대가 성공적으로 업데이트되었습니다."); // 성공 메시지를 포함한 응답
     }
 
@@ -76,8 +73,8 @@ public class StageCommandController {
             @ApiResponse(responseCode = "404", description = "무대를 찾을 수 없습니다.")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        stageDeleteService.delete(id);
+    public ResponseEntity<Void> delete(@Parameter(hidden = true) @UserId CustomUserInfoDTO customUserInfoDTO,@PathVariable Long id) {
+        stageDeleteService.delete(customUserInfoDTO.getUserId(),id);
         return ResponseEntity.noContent().build();
     }
 }

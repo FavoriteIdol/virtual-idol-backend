@@ -5,10 +5,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Schema(title = "AUTH_REQ_02 : 회원가입 요청 DTO")
 @AllArgsConstructor
+@NoArgsConstructor
 public class SignUpRequestDTO {
     @Schema(description = "사용자 이메일 주소", example = "user@example.com")
     @Email

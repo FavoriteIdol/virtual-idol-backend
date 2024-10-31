@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Service
@@ -74,15 +77,18 @@ public class MinioService implements FileUploadService {
         String fileUrl =  minioServerDomain + "/" + bucketName + "/" + sb.toString();
         return fileUrl;
     }
-
-    public String getFileUrl(String filename) throws Exception {
-        // Pre-signed URL 생성
-        return minioClient.getPresignedObjectUrl(
-                GetPresignedObjectUrlArgs.builder()
-                        .method(Method.GET)
-                        .bucket(bucketName)
-                        .object(filename)
-                        .expiry(24 * 60 * 60) // 24시간 유효
-                        .build());
+    public InputStream downloadFile(String filename) throws Exception {
+        return minioClient.getObject(GetObjectArgs.builder()
+                .bucket(bucketName)
+                .object(filename)
+                .build());
     }
+    // Method to extract filename from URL
+    public String extractFilenameFromUrl(String fileUrl) throws Exception {
+        // Assuming the URL structure is like: https://example.com/bucket-name/filename
+        String decodedUrl = URLDecoder.decode(fileUrl, StandardCharsets.UTF_8);
+        // Extract the last part of the URL, which should be the filename
+        return decodedUrl.substring(decodedUrl.lastIndexOf("/") + 1);
+    }
+
 }

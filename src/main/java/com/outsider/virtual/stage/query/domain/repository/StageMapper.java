@@ -20,6 +20,8 @@ public interface StageMapper {
     @Mapping(source = "stage.theme", target = "theme")
     @Mapping(source = "stage.specialEffect", target = "specialEffect")
     @Mapping(source = "user.userName", target = "userName")
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "stage.img", target = "img")
     StageDTO toStageDTO(Stage stage, User user);
 
     @AfterMapping

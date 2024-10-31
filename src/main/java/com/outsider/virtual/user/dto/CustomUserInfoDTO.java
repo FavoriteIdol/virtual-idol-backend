@@ -3,6 +3,7 @@ package com.outsider.virtual.user.dto;
 
 import com.outsider.virtual.user.command.domain.aggregate.User;
 import com.outsider.virtual.user.command.domain.aggregate.embeded.Authority;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data

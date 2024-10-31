@@ -9,8 +9,9 @@ import lombok.Data;
 @Data
 public class StageUpdateDTO {
     private String name;
-    private TerrainType terrain;
-    private SkyType sky;
-    private ThemeType theme;
-    private SpecialEffectType specialEffect;
+    private Integer terrain;
+    private Integer sky;
+    private Integer theme;
+    private Integer specialEffect;
+    private String img;
 }

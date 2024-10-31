@@ -1,6 +1,7 @@
 package com.outsider.virtual.user.command.domain.aggregate;
 
 import com.outsider.virtual.user.command.domain.aggregate.embeded.*;
+import com.outsider.virtual.util.BaseEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "tbl_user")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @Column(name = "user_id")
@@ -29,6 +30,16 @@ public class User {
 
     @Column(name = "user_authority")
     private Authority authority;
+    @Column(name = "user_avatar")
+    private String avatar;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
@@ -41,8 +52,8 @@ public class User {
         return authority;
     }
 
-    public void setAuthority(Authority authority) {
-        this.authority = authority;
+    public void setAuthority(String authority) {
+        this.authority = Authority.fromString(authority);
     }
 
     public void setWithdrawal(Boolean withdrawal) {
@@ -104,5 +115,13 @@ public class User {
                 ", password='" + password + '\'' +
                 ", userName='" + userName + '\'' +
                 '}';
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

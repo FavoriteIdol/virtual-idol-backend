@@ -25,16 +25,21 @@ public class StageQueryService {
                 .orElseThrow(() -> new RuntimeException("Stage not found"));
         return convertToDTO(entity);
     }
-
+    public Page<StageDTO> getStagesByUserId(Long userId, Pageable pageable) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId는 null일 수 없습니다.");
+        }
+        return stageQueryRepository.findStagesByUserId(userId, pageable);
+    }
     // Entity -> DTO 변환
     public StageDTO convertToDTO(Stage entity) {
         StageDTO dto = new StageDTO();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
-        dto.setTerrain(entity.getTerrain() != null ? entity.getTerrain().name() : null);
-        dto.setSky(entity.getSky() != null ? entity.getSky().name() : null);
-        dto.setTheme(entity.getTheme() != null ? entity.getTheme().name() : null);
-        dto.setSpecialEffect(entity.getSpecialEffect() != null ? entity.getSpecialEffect().name() : null);
+        dto.setTerrain(entity.getTerrain() );
+        dto.setSky(entity.getSky());
+        dto.setTheme(entity.getTheme() );
+        dto.setSpecialEffect(entity.getSpecialEffect() );
         return dto;
     }
 }

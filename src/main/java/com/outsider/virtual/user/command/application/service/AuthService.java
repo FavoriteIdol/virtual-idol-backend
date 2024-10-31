@@ -1,9 +1,9 @@
 package com.outsider.virtual.user.command.application.service;
 
-import com.outsider.virtual.user.command.application.dto.CustomUserInfoDTO;
 import com.outsider.virtual.user.command.application.dto.LoginRequestDTO;
 import com.outsider.virtual.user.command.domain.aggregate.User;
 import com.outsider.virtual.user.command.domain.repository.UserCommandRepository;
+import com.outsider.virtual.user.dto.CustomUserInfoDTO;
 import com.outsider.virtual.util.JwtUtil;
 
 import org.springframework.security.authentication.BadCredentialsException;

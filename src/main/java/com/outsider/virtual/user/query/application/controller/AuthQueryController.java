@@ -30,7 +30,6 @@ public class AuthQueryController {
         this.userService = userService;
     }
 
-    @CrossOrigin(origins = "https://monitor.master-of-prediction.shop:3001", allowedHeaders = "*", allowCredentials = "true")
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "사용자가 로그인하여 액세스 토큰을 받아옵니다. 쿠키에 토큰이 설정됩니다.")
     public ResponseEntity<UserInfoRequestDTO> postMemberProfile(

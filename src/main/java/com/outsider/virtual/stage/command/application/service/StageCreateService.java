@@ -17,8 +17,9 @@ public class StageCreateService {
         this.stageCreateMapper = stageCreateMapper;
     }
 
-    public void register(Long userId, StageCreateDTO dto) {
+    public Long register(Long userId, StageCreateDTO dto) {
         Stage entity = stageCreateMapper.toEntity(dto, userId); // MapStruct 매퍼 사용
         stageRepository.save(entity);
+        return entity.getId();
     }
 }

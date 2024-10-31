@@ -1,6 +1,6 @@
 package com.outsider.virtual.util;
 
-import com.outsider.virtual.user.command.application.dto.CustomUserInfoDTO;
+import com.outsider.virtual.user.dto.CustomUserInfoDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -52,6 +52,7 @@ public class JwtUtil {
         claims.put("userId", user.getUserId());
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
+        claims.put("username", user.getUsername());
 
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(expireTime);
@@ -77,6 +78,12 @@ public class JwtUtil {
 
     public String getUserEmail(String token) {
         return parseClaims(token).get("email", String.class);
+    }
+    public String getUserName(String token) {
+        return parseClaims(token).get("username", String.class);
+    }
+    public String getRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
     /**
      * JWT 검증

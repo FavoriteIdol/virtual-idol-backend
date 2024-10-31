@@ -37,20 +37,17 @@ public class GetOrFullAuthorizationManager implements AuthorizationManager<Reque
 
         boolean granted;
 
-        if (userIdParam != null) {
-            Long userId = Long.parseLong(userIdParam);
 
-            if (userId.equals(currentUserId)) {
-                // 쿼리 스트링의 userid가 현재 사용자의 ID와 일치하는 경우
-                granted = true;  // 모든 요청(GET, POST, PUT, DELETE 등) 허용
-            } else {
-                // 쿼리 스트링의 userid가 일치하지 않는 경우
-                granted = "GET".equalsIgnoreCase(method);  // GET 요청만 허용
-            }
-        } else {
             // userid 파라미터가 없으면 기본적으로 GET 요청만 허용
-            granted = "GET".equalsIgnoreCase(method);
-        }
+            if(currentUserId!=null)
+            {
+                granted = "GET".equalsIgnoreCase(method) || "POST".equalsIgnoreCase(method)|| "PUT".equalsIgnoreCase(method)|| "DELETE".equalsIgnoreCase(method);
+
+            }else
+            {
+                granted = "GET".equalsIgnoreCase(method);
+            }
+
 
         return new AuthorizationDecision(granted);
     }

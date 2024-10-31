@@ -1,8 +1,14 @@
 package com.outsider.virtual.concert.query.application.service;
 
 import com.outsider.virtual.concert.command.domain.aggregate.Concert;
+import com.outsider.virtual.concert.query.application.dto.ConcertInfoDTO;
+import com.outsider.virtual.concert.query.application.dto.PerformanceDTO;
+import com.outsider.virtual.concert.query.domain.repository.ConcertInfoMapper;
+import com.outsider.virtual.concert.query.domain.repository.ConcertMapper;
 import com.outsider.virtual.concert.query.domain.repository.ConcertQueryRepository;
 import com.outsider.virtual.concert.query.application.dto.ConcertDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,29 +17,34 @@ import java.util.stream.Collectors;
 public class ConcertQueryService {
 
     private final ConcertQueryRepository concertQueryRepository;
-
-    public ConcertQueryService(ConcertQueryRepository concertQueryRepository) {
+    private final ConcertInfoMapper concertMapper;
+    public ConcertQueryService(ConcertQueryRepository concertQueryRepository, ConcertInfoMapper concertMapper) {
         this.concertQueryRepository = concertQueryRepository;
+        this.concertMapper = concertMapper;
     }
 
-    public List<ConcertDTO> getAllConcerts() {
-        List<Concert> entities = concertQueryRepository.findAll();
-        return entities.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<ConcertDTO> getAllConcerts(Pageable pageable) {
+        return concertQueryRepository.findAllConcertWithUsers(pageable);
     }
 
-    public ConcertDTO getConcertById(Long id) {
+    public ConcertInfoDTO getConcertById(Long id) {
         Concert entity = concertQueryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Concert not found"));
-        return convertToDTO(entity);
+        return concertMapper.toDTO(entity);
+    }
+    public Page<ConcertDTO> getConcertsByUserId(Long userId, Pageable pageable) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId는 null일 수 없습니다.");
+        }
+        return concertQueryRepository.findConcertsByUserId(userId, pageable);
+    }
+    // Entity -> DTO 변환
+    public List<PerformanceDTO> getConcertsByYearAndMonth(int year, int month) {
+        return concertQueryRepository.findConcertsByYearAndMonth(year, month);
     }
 
-    // Entity -> DTO 변환
-    public ConcertDTO convertToDTO(Concert entity) {
-        ConcertDTO dto = new ConcertDTO();
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        return dto;
+
+    public List<PerformanceDTO> getImminentConcerts(int limit) {
+        return concertQueryRepository.findImminentConcerts(limit);
     }
 }

@@ -1,52 +1,66 @@
 package com.outsider.virtual.config;
 
 import com.outsider.virtual.user.command.infrastructure.service.CustomUserDetail;
-import com.outsider.virtual.user.command.infrastructure.service.CustomUserService;
 import com.outsider.virtual.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @RequiredArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilter -> 한 번 실행 보장
+@Slf4j
+public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final CustomUserService customUserDetailsService;
     private final JwtUtil jwtUtil;
 
     @Override
-    /**
-     * JWT 토큰 검증 필터 수행
-     */
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
-        //JWT가 헤더에 있는 경우
+        // JWT 토큰이 헤더에 있는 경우
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
-            //JWT 유효성 검증
+
+            // JWT 토큰의 유효성 검증
+            log.info("JWT VALIDATE: {}",jwtUtil.validateToken(token));
             if (jwtUtil.validateToken(token)) {
                 Long userId = jwtUtil.getUserId(token);
                 String email = jwtUtil.getUserEmail(token);
-                //유저와 토큰 일치 시 userDetails 생성
-                CustomUserDetail userDetails = (CustomUserDetail) customUserDetailsService.loadUserByUsername(email);
+                String userName = jwtUtil.getUserName(token);
+                String role = jwtUtil.getRole(token);
+                log.info("JWT VALIDATE userId: {}", userId);
 
-                if (userDetails != null) {
-                    //UserDetsils, Password, Role -> 접근권한 인증 Token 생성
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // CustomUserDetail 객체 생성
+                UserDetails userDetails = new CustomUserDetail(userId, email, userName, role);
 
-                    //현재 Request의 Security Context에 접근권한 설정
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    // Add userId to the request header
-                    request.setAttribute("userId", userId); // Setting as request attribute
-                }
+                // UsernamePasswordAuthenticationToken 생성
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // SecurityContextHolder에 인증 정보 설정
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // 사용자 정보를 HTTP 헤더에 추가하여 다른 마이크로서비스로 전달
+                String encodedUserName = URLEncoder.encode(userName, "UTF-8");
+                request.setAttribute("X-User-Id", userId.toString());
+                request.setAttribute("X-User-Email", email);
+                request.setAttribute("X-User-Name", userName);
+                request.setAttribute("X-User-Role", role);
+                //TODO: MSA 헤더 User 정보 전파
+                response.setHeader("X-User-Id", userId.toString());
+                response.setHeader("X-User-Email", email);
+                response.setHeader("X-User-Name", encodedUserName);
+                response.setHeader("X-User-Role", role);
             }
         }
 

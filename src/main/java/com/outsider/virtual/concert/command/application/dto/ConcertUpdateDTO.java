@@ -1,23 +1,19 @@
 package com.outsider.virtual.concert.command.application.dto;
 
+import com.outsider.virtual.concert.command.domain.aggregate.AppearedVFX;
+import com.outsider.virtual.concert.command.domain.aggregate.FeverVFX;
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Data
 public class ConcertUpdateDTO {
-    private Long id;
     private String name;
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String img;
+    private LocalDate concertDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private Integer appearedVFX;
+    private Integer feverVFX;
 }

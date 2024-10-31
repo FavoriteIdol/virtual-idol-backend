@@ -37,10 +37,10 @@ public class WebSecurityService {
         Object principal = authentication.getPrincipal();
         if (principal instanceof CustomUserDetail) {
             // UserDetails에서 사용자 이름을 가져와 ID로 사용 (필요 시 커스터마이징)
-            return Long.parseLong(((CustomUserDetail) principal).getUsername());
+            return ((CustomUserDetail) principal).getId();
         }
 
         // 기본적으로 사용자 이름을 ID로 간주
-        return Long.parseLong(principal.toString());
+        return null;
     }
 }

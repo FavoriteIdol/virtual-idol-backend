@@ -6,14 +6,23 @@ import com.outsider.virtual.concert.command.application.service.ConcertDeleteSer
 import com.outsider.virtual.concert.command.application.dto.ConcertCreateDTO;
 import com.outsider.virtual.concert.command.application.dto.ConcertUpdateDTO;
 import com.outsider.virtual.concert.command.application.dto.ConcertDeleteDTO;
+import com.outsider.virtual.concert.query.application.dto.CreateResponseDTO;
+import com.outsider.virtual.user.dto.CustomUserInfoDTO;
+import com.outsider.virtual.user.exception.NotAuthenticationException;
+import com.outsider.virtual.util.UserId;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Hidden
 @RestController
 @RequestMapping("/api/v1/concerts")
+@Tag(name =  "콘서트 관리" , description = " 콘서트 Create ,Update, Delete API")
 public class ConcertCommandController {
 
     private final ConcertCreateService concertCreateService;
@@ -28,27 +37,37 @@ public class ConcertCommandController {
         this.concertUpdateService = concertUpdateService;
         this.concertDeleteService = concertDeleteService;
     }
-
+    @Operation(summary = "새로운 콘서트 예약 생성", description = "제공된 세부 정보를 사용하여 새로운 콘서트를 등록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "콘서트가 성공적으로 생성되었습니다."),
+            @ApiResponse(responseCode = "400", description = "입력 데이터가 잘못되었습니다.")
+    })
     @PostMapping
-    public ResponseEntity<String> register(@RequestBody ConcertCreateDTO dto) {
-        concertCreateService.register(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("성공적으로 생성되었습니다.");
+    public ResponseEntity<CreateResponseDTO> register(@RequestBody ConcertCreateDTO dto, @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
+
+        Long concertId= concertCreateService.register(userInfoDTO.getUserId(),dto);
+        CreateResponseDTO responseDTO = new CreateResponseDTO("성공적으로 생성되었습니다.", concertId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> update(
             @PathVariable Long id,
-            @RequestBody ConcertUpdateDTO dto) {
-        dto.setId(id);
-         concertUpdateService.update(dto);
+            @RequestBody ConcertUpdateDTO dto
+            , @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
+
+            concertUpdateService.update(userInfoDTO.getUserId(), id,dto);
+
+
         return ResponseEntity.ok("성공적으로 업데이트되었습니다.");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id ,@Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
         ConcertDeleteDTO dto = new ConcertDeleteDTO();
         dto.setId(id);
-        concertDeleteService.delete(dto);
+        concertDeleteService.delete(userInfoDTO.getUserId(),id);
+
         return ResponseEntity.noContent().build();
     }
 }
