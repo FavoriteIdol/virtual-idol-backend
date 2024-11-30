@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/api/v1/files/upload").permitAll()
                         .requestMatchers("/**").access(customAuthorizationManager)
                         .anyRequest().authenticated()
                 )
@@ -81,6 +81,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://master-of-prediction.shop:3334");
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://localhost:3001");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

@@ -34,9 +34,11 @@ public class UserInfoService {
     // Private method to convert User entity to UserInfoRequestDTO
     private UserInfoRequestDTO convertToDTO(User user) {
         return new UserInfoRequestDTO(
+                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
                 user.getUserName(),
+                user.getUserImg(),
                 user.getAuthority()
         );
     }

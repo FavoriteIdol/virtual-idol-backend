@@ -16,9 +16,12 @@ public interface ConcertCollectionRepository extends JpaRepository<ConcertCollec
     boolean existsByUserIdAndConcertId(Long userId, Long concertId);
 
     @Query("SELECT new com.outsider.virtual.useractivity.query.dto.CollectionDTO(" +
-            "c.concert.id, c.concert.name, c.concert.img, c.collectedDate) " +
+            "c.concert.id, c.concert.name, c.concert.img, c.collectedDate, " +
+            "(SELECT u.userName FROM User u WHERE u.id = c.concert.userId), " +
+            "(SELECT u.userName FROM User u WHERE u.id = c.user.id)) " +
             "FROM ConcertCollection c " +
             "WHERE c.user.id = :userId")
     Page<CollectionDTO> findUserCollections(@Param("userId") Long userId, Pageable pageable);
+
 }
 

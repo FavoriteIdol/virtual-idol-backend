@@ -26,8 +26,17 @@ public class User extends BaseEntity {
 
     @Column(name = "user_withdrawal")
     private Boolean isWithdrawal;
-    @Enumerated(EnumType.STRING)
+    @Column(name = "user_Img")
+    private String userImg;
 
+    public String getUserImg() {
+        return userImg;
+    }
+
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_authority")
     private Authority authority;
     @Column(name = "user_avatar")
@@ -70,12 +79,13 @@ public class User extends BaseEntity {
 
     public User() {
     }
-    public User(String email, String password, String userName,Authority authority) {
+    public User(String email, String password, String userName,String userImg,Authority authority) {
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.isWithdrawal = false;
         this.authority =authority;
+        this.userImg = userImg;
         this.joinDate = LocalDate.now();
     }
 

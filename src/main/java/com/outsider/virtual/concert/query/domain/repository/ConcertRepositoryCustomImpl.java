@@ -6,6 +6,7 @@ import com.outsider.virtual.concert.query.application.dto.PerformanceDTO;
 import com.outsider.virtual.stage.command.domain.aggregate.QStage;
 import com.outsider.virtual.user.command.domain.aggregate.QUser;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
@@ -124,7 +125,7 @@ public class ConcertRepositoryCustomImpl implements ConcertRepositoryCustom{
         return new PageImpl<>(results, pageable, total);
     }
 
-    // 추가된 메서드: 임박한 공연을 가져오는 메서드
+    // 임박한 공연을 가져오는 메서드 수정
     @Override
     public List<PerformanceDTO> findImminentConcerts(int limit) {
         QConcert concert = QConcert.concert;
@@ -134,9 +135,12 @@ public class ConcertRepositoryCustomImpl implements ConcertRepositoryCustom{
                 .select(concert, stage)
                 .from(concert)
                 .leftJoin(stage).on(concert.stageId.eq(stage.id))
-                .where(concert.concertDate.goe(LocalDate.now())) // 오늘 날짜 이후의 공연만 가져옴
-                .orderBy(concert.concertDate.asc(), concert.startTime.asc()) // 날짜와 시작 시간으로 정렬
-                .limit(limit)
+                .orderBy(Expressions.numberTemplate(
+                                Long.class,
+                                "abs(datediff({0}, {1}))", concert.concertDate, LocalDate.now()
+                        ).asc(),
+                        concert.startTime.asc())
+                .limit(limit)  // 최대 limit 개수만큼 가져오기
                 .fetch();
 
         return tuples.stream()

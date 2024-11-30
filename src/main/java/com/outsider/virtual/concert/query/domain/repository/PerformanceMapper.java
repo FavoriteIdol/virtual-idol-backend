@@ -26,7 +26,10 @@ public interface PerformanceMapper {
     @Mapping(source = "concert.img", target = "img")
     @Mapping(source = "concert.concertDate", target = "concertDate")
     @Mapping(source = "concert.startTime", target = "startTime")
+    @Mapping(source = "concert.endTime", target = "endTime")
     @Mapping(source = "concert.ticketPrice", target = "ticketPrice")
+    @Mapping(source = "concert.name", target = "concertName")
+    @Mapping(source = "concert.img", target = "concertImg")
     @Mapping(source = "stage.name", target = "stageName")
     @Mapping(source = "stage.img", target = "stageImg")
     PerformanceDTO toDTO(Concert concert, Stage stage);

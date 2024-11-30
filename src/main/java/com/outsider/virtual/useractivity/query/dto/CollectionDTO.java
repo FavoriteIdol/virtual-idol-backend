@@ -15,11 +15,15 @@ public class CollectionDTO {
     private String concertName;
     private String concertImage;
     private LocalDateTime collectedDate;
+    private String artist;
+    private String audience;
 
-    public CollectionDTO(Long concertId, String concertName, String concertImage, LocalDateTime collectedDate) {
+    public CollectionDTO(Long concertId, String concertName, String concertImage, LocalDateTime collectedDate,String artist,String audience) {
         this.concertId = concertId;
         this.concertName = concertName;
         this.concertImage = concertImage;
         this.collectedDate = collectedDate;
+        this.artist = artist;
+        this.audience = audience;
     }
 }

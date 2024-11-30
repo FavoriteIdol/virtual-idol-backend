@@ -23,5 +23,7 @@ public class SignUpRequestDTO {
     @NotNull(message = "사용자 이름 입력은 필수입니다.")
     private String userName;
 
+    private String userImg;
+
 
 }

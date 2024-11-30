@@ -35,6 +35,7 @@ public class RegistUserService {
                 userRegistRequestDTO.getEmail(),
                 userRegistRequestDTO.getPassword(),
                 userRegistRequestDTO.getUserName(),
+                userRegistRequestDTO.getUserImg(),
                 Authority.ROLE_USER
         );
         // 사용자 저장
@@ -51,6 +52,7 @@ public class RegistUserService {
                 userRegistRequestDTO.getEmail(),
                 passwordEncoder.encode(userRegistRequestDTO.getPassword()),
                 userRegistRequestDTO.getUserName(),
+                userRegistRequestDTO.getUserImg(),
                 Authority.ROLE_USER
         );
         // 사용자 저장
