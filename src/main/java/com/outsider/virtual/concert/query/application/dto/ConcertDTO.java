@@ -2,10 +2,12 @@ package com.outsider.virtual.concert.query.application.dto;
 
 import com.outsider.virtual.concert.command.domain.aggregate.AppearedVFX;
 import com.outsider.virtual.concert.command.domain.aggregate.FeverVFX;
+import com.outsider.virtual.song.query.application.dto.SongDTO;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class ConcertDTO {
@@ -22,4 +24,5 @@ public class ConcertDTO {
     private Long stageId;
     private String ticketPrice;
     private String peopleScale;
+    private List<SongDTO> songs;
 }

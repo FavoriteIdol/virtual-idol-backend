@@ -22,7 +22,6 @@ public interface ConcertInfoMapper {
     @Mapping(source = "concert.userId", target = "userId")
     ConcertInfoDTO toDTO(Concert concert);
 
-
     @AfterMapping
     default void populateUserFields(@MappingTarget ConcertDTO stageDTO, User user) {
         if (user != null) {

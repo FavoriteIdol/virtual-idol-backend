@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+
+import com.outsider.virtual.song.query.application.dto.SongDTO;
 
 @Data
 public class ConcertInfoDTO {
@@ -20,4 +23,5 @@ public class ConcertInfoDTO {
     private Long stageId;
     private String ticketPrice;
     private String peopleScale;
+    private List<SongDTO> songs;
 }

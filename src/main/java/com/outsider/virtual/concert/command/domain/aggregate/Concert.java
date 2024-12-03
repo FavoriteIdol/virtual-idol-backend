@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Concert extends BaseEntity {
@@ -42,6 +44,14 @@ public class Concert extends BaseEntity {
 
     @Column(name="people_scale")
     private Integer peopleScale;
+
+    @ElementCollection
+    @CollectionTable(
+        name = "concert_songs",
+        joinColumns = @JoinColumn(name = "concert_id")
+    )
+    @Column(name = "song_id")
+    private List<Long> songIds = new ArrayList<>();
 
     public Integer getPeopleScale() {
         return peopleScale;
@@ -115,6 +125,14 @@ public class Concert extends BaseEntity {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public List<Long> getSongIds() {
+        return songIds;
+    }
+
+    public void setSongIds(List<Long> songIds) {
+        this.songIds = songIds;
     }
 
     // Constructors
