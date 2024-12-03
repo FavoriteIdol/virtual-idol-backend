@@ -93,50 +93,49 @@ public class DummyConfig {
        LocalDate today = LocalDate.now();
        LocalTime currentTime = LocalTime.now();
 
-       // 5개의 공연 생성
-       // 1. 지난 공연 (2일 전)
-       Long pastConcert1 = getOrCreateConcert(
+       // 지난 공연 (2일 전)
+       Long concertId1 = getOrCreateConcert(
            "유니 단독 콘서트 \"HELLO UNNI\"", 
            minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
            today.minusDays(2), LocalTime.of(18, 0), LocalTime.of(20, 30),
            1, 1, stageId, 1000, 500, unniSongs
        );
 
-       // 2. 지난 공연 (어제)
-       Long pastConcert2 = getOrCreateConcert(
-           "아쿠아 단독 콘서트 \"AQUA BLUE\"", 
+       // 지난 공연 (어제)
+       Long concertId2 = getOrCreateConcert(
+           "아쿠아 단독 콘서트 \"I AM AQUA\"", 
            minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
-           today.minusDays(1), LocalTime.of(14, 0), LocalTime.of(16, 30),
-           1, 1, stageId, 1200, 600, aquaSongs
+           today.minusDays(1), LocalTime.of(14, 0), LocalTime.of(15, 0),
+           1, 1, stageId, 1500, 400, aquaSongs
        );
 
-       // 3. 진행 중인 공연 (현재)
-       Long ongoingConcert = getOrCreateConcert(
-           "유니 & 아쿠아 합동 콘서트 \"COLLABORATION\"", 
-           minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
-      
-           1, 1, stageId, 1800, 800, aquaSongs
+       // 진행 중인 공연
+       Long concertId3 = getOrCreateConcert(
+           "이세계 아이돌 단독 콘서트 \"이세계 페스티벌\"", 
+           minioUrl + "/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png",
+           today, currentTime.minusHours(1), currentTime.plusHours(1),
+           1, 1, stageId, 2000, 1000, isekaiSongs
        );
 
-       // 4. 예정된 공연 (내일)
-       Long futureConcert1 = getOrCreateConcert(
-           "아쿠아 단독 콘서트 \"AQUA FESTIVAL\"", 
-           minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
-           today.plusDays(1), LocalTime.of(18, 0), LocalTime.of(21, 0),
-           1, 1, stageId, 2200, 1100, aquaSongs
+       // 예정된 공연 (내일)
+       Long concertId4 = getOrCreateConcert(
+           "아쿠아 단독 콘서트 \"PURPLELAR\"", 
+           minioUrl + "/virtual-files/ba9ce80f-6b83-4786-8c90-16af229e813d.png",
+           today.plusDays(1), LocalTime.of(11, 0), LocalTime.of(12, 0),
+           1, 1, stageId, 1200, 300, aquaSongs
        );
 
-       // 5. 예정된 공연 (3일 후)
-       Long futureConcert2 = getOrCreateConcert(
-           "유니 단독 콘서트 \"UNNI UNIVERSE\"", 
-           minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
-           today.plusDays(3), LocalTime.of(19, 0), LocalTime.of(22, 0),
-           1, 1, stageId, 2000, 1000, unniSongs
+       // 예정된 공연 (3일 후)
+       Long concertId5 = getOrCreateConcert(
+           "아린 단독 콘서트 \"STARLIGHT ARIN\"", 
+           minioUrl + "/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png",
+           today.plusDays(3), LocalTime.of(19, 0), LocalTime.of(21, 30),
+           2, 2, stageId, 2000, 800, arinSongs
        );
 
        // 모든 공연에 대한 관람 이력 및 콜렉션 생성
        List<Long> allConcerts = List.of(
-           pastConcert1, pastConcert2, ongoingConcert, futureConcert1, futureConcert2
+           concertId1, concertId2, concertId3, concertId4, concertId5
        );
 
        for (Long concertId : allConcerts) {
