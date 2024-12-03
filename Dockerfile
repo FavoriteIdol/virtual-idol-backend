@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # 애플리케이션 JAR 파일 복사
-COPY build/libs/midnight-0.0.1-SNAPSHOT.jar app.jar
+COPY build/libs/midnight-1.0.0.jar app.jar
 
 
 # 애플리케이션 실행
