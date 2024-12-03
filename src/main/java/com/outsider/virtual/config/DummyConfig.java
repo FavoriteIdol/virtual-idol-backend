@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Configuration
-@Profile("dev")
 public class DummyConfig {
 
     private final ConcertCreateService concertService;
