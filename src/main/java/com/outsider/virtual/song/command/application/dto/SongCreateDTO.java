@@ -11,7 +11,7 @@ public class SongCreateDTO {
     @Schema(description = "노래 제목", example = "노래 제목", required = true)
     private String title;
 
-    @Schema(description = "아티스트 ID", example = "1")
+    @Schema(hidden = true)
     private Long artistId;
 
     @Schema(description = "재생 시간(초)", example = "180")

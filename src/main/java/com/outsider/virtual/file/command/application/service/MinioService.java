@@ -91,4 +91,13 @@ public class MinioService implements FileUploadService {
         return decodedUrl.substring(decodedUrl.lastIndexOf("/") + 1);
     }
 
+    public void deleteFile(String filename) throws Exception {
+        minioClient.removeObject(
+            RemoveObjectArgs.builder()
+                .bucket(bucketName)
+                .object(filename)
+                .build()
+        );
+    }
+
 }

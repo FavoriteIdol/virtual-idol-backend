@@ -50,4 +50,16 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
+    @DeleteMapping
+    @Operation(summary = "파일 삭제", description = "서버에서 파일을 삭제합니다.")
+    public ResponseEntity<Void> deleteFile(@RequestParam("fileUrl") String fileUrl) {
+        try {
+            String filename = minioService.extractFilenameFromUrl(fileUrl);
+            minioService.deleteFile(filename);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

@@ -40,12 +40,17 @@ public class ConcertQueryService {
         Page<ConcertDTO> concertPage = concertQueryRepository.findAllConcertWithUsers(pageable);
         
         concertPage.getContent().forEach(dto -> {
-            List<Song> songs = songRepository.findAllById(dto.getSongs().stream()
-                    .map(SongDTO::getId)
-                    .collect(Collectors.toList()));
-            dto.setSongs(songs.stream()
-                    .map(songMapper::toDTO)
-                    .collect(Collectors.toList()));
+            Concert concert = concertQueryRepository.findById(dto.getId())
+                    .orElseThrow(() -> new RuntimeException("Concert not found"));
+                    
+            if (concert.getSongIds() != null && !concert.getSongIds().isEmpty()) {
+                List<Song> songs = songRepository.findAllById(concert.getSongIds());
+                if (!songs.isEmpty()) {
+                    dto.setSongs(songs.stream()
+                            .map(songMapper::toDTO)
+                            .collect(Collectors.toList()));
+                }
+            }
         });
         
         return concertPage;
@@ -57,10 +62,14 @@ public class ConcertQueryService {
                 
         ConcertInfoDTO dto = concertMapper.toDTO(concert);
         
-        List<Song> songs = songRepository.findAllById(concert.getSongIds());
-        dto.setSongs(songs.stream()
-                .map(songMapper::toDTO)
-                .collect(Collectors.toList()));
+        if (concert.getSongIds() != null && !concert.getSongIds().isEmpty()) {
+            List<Song> songs = songRepository.findAllById(concert.getSongIds());
+            if (!songs.isEmpty()) {
+                dto.setSongs(songs.stream()
+                        .map(songMapper::toDTO)
+                        .collect(Collectors.toList()));
+            }
+        }
         
         return dto;
     }

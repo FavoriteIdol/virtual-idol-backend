@@ -2,14 +2,20 @@ package com.outsider.virtual.concert.command.domain.aggregate;
 
 import com.outsider.virtual.util.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
+@Getter
+@Setter
 public class Concert extends BaseEntity {
 
     @Id
@@ -40,33 +46,52 @@ public class Concert extends BaseEntity {
     private Long stageId;
 
     @Column(name="ticket_price")
-    private Integer ticketPrice;
+    private String ticketPrice;
 
     @Column(name="people_scale")
-    private Integer peopleScale;
+    private String peopleScale;
 
-    @ElementCollection
-    @CollectionTable(
-        name = "concert_songs",
-        joinColumns = @JoinColumn(name = "concert_id")
-    )
-    @Column(name = "song_id")
-    private List<Long> songIds = new ArrayList<>();
+    @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConcertSong> songs = new ArrayList<>();
 
-    public Integer getPeopleScale() {
-        return peopleScale;
+    public void updateSongs(List<Long> songIds) {
+        if (this.songs == null) {
+            this.songs = new ArrayList<>();
+        }
+        
+        this.songs.clear();
+        
+        if (songIds != null) {
+            Set<Long> uniqueSongIds = new HashSet<>(songIds);
+            
+            uniqueSongIds.forEach(songId -> {
+                boolean exists = this.songs.stream()
+                    .anyMatch(song -> song.getSongId().equals(songId));
+                
+                if (!exists) {
+                    ConcertSong concertSong = new ConcertSong();
+                    concertSong.setConcert(this);
+                    concertSong.setSongId(songId);
+                    this.songs.add(concertSong);
+                }
+            });
+        }
     }
 
-    public void setPeopleScale(Integer peopleScale) {
-        this.peopleScale = peopleScale;
+    public List<Long> getSongIds() {
+        if (this.songs == null) {
+            return new ArrayList<>();
+        }
+        return this.songs.stream()
+            .map(ConcertSong::getSongId)
+            .collect(Collectors.toList());
     }
 
-    public Integer getTicketPrice() {
-        return ticketPrice;
-    }
+    // Constructors
+    public Concert() {}
 
-    public void setTicketPrice(Integer ticketPrice) {
-        this.ticketPrice = ticketPrice;
+    public Concert(String name) {
+        this.name = name;
     }
 
     public Long getStageId() {
@@ -92,8 +117,6 @@ public class Concert extends BaseEntity {
     public void setFeverVFX(Integer feverVFX) {
         this.feverVFX = feverVFX;
     }
-
-
 
     public LocalDate getConcertDate() {
         return concertDate;
@@ -125,47 +148,5 @@ public class Concert extends BaseEntity {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public List<Long> getSongIds() {
-        return songIds;
-    }
-
-    public void setSongIds(List<Long> songIds) {
-        this.songIds = songIds;
-    }
-
-    // Constructors
-    public Concert() {}
-
-    public Concert(String name) {
-        this.name = name;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {  // setId 메서드 추가
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-
-    public String getImg() {
-        return img;
-    }
-
-    public void setImg(String img) {
-        this.img = img;
     }
 }

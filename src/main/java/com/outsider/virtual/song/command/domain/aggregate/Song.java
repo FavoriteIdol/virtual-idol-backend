@@ -8,21 +8,21 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "songs")
 public class Song extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "song_id")
     private Long id;
 
-    @Column(name = "song_url", nullable = false, length = 512)
-    private String url;
-
-    @Column(name = "song_title", nullable = false)
     private String title;
+    private String url;
 
     @Column(name = "artist_id")
     private Long artistId;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "duration")
     private Integer duration;

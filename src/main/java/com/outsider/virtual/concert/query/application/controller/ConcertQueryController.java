@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +55,12 @@ public class ConcertQueryController {
     @GetMapping("/imminent")
     public List<PerformanceDTO> getImminentConcerts(@RequestParam(defaultValue = "5") int limit) {
         return concertQueryService.getImminentConcerts(limit);
+    }
+
+    @Operation(summary = "사용자의 콘서트 등록 여부 확인", description = "특정 사용자가 콘서트를 등록했는지 확인합니다.")
+    @GetMapping("/check-registration/{userId}")
+    public ResponseEntity<Boolean> checkConcertRegistration(@PathVariable Long userId) {
+        Page<ConcertDTO> concerts = concertQueryService.getConcertsByUserId(userId, PageRequest.of(0, 1));
+        return ResponseEntity.ok(!concerts.isEmpty());
     }
 }

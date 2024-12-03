@@ -2,7 +2,10 @@ package com.outsider.virtual.song.command.application.controller;
 
 import com.outsider.virtual.song.command.application.dto.SongCreateDTO;
 import com.outsider.virtual.song.command.application.service.SongCreateService;
+import com.outsider.virtual.user.dto.CustomUserInfoDTO;
+import com.outsider.virtual.util.UserId;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +23,10 @@ public class SongCommandController {
 
     @PostMapping
     @Operation(summary = "노래 등록", description = "새로운 노래를 등록합니다.")
-    public ResponseEntity<Long> register(@RequestBody SongCreateDTO dto) {
+    public ResponseEntity<Long> register(
+            @RequestBody SongCreateDTO dto,
+            @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
+        dto.setArtistId(userInfoDTO.getUserId());
         Long songId = songCreateService.register(dto);
         return ResponseEntity.ok(songId);
     }
