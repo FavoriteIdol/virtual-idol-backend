@@ -68,7 +68,7 @@ public class DummyConfig {
 
    @PostConstruct
    public void init() {
-       // UNNI, AQUA, 이세계 아이돌 아티스트와 준혁쨩 유저 생성
+       // 아티스트와 관객 생성
        Long artistId1 = createDummyUser("unni@example.com", "1", "UNNI", 
            minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png");
        Long artistId2 = createDummyUser("aqua@example.com", "1", "AQUA", 
@@ -80,7 +80,7 @@ public class DummyConfig {
        Long audienceId = createDummyUser("junhyuk@example.com", "1", "준혁쨩", 
            minioUrl + "/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
 
-       // Stage가 이미 존재하는지 확인 후 생성
+       // Stage 생성
        Long stageId = getOrCreateStage("Main Stage", 1, 1, 1, 1, 
            minioUrl + "/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
 
@@ -90,49 +90,59 @@ public class DummyConfig {
        List<Long> isekaiSongs = createSongs(artistId3, "이세계 아이돌의 노래", 3);
        List<Long> arinSongs = createSongs(artistId4, "아린의 노래", 3);
 
-       // 현재 시간 기준으로 날짜 설정
        LocalDate today = LocalDate.now();
        LocalTime currentTime = LocalTime.now();
 
-       // 1. 지난 공연 (어제)
-       Long concertId1 = getOrCreateConcert(
+       // 5개의 공연 생성
+       // 1. 지난 공연 (2일 전)
+       Long pastConcert1 = getOrCreateConcert(
            "유니 단독 콘서트 \"HELLO UNNI\"", 
            minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
-           today.minusDays(1),  // 어제
-           LocalTime.of(18, 0),
-           LocalTime.of(20, 30),
+           today.minusDays(2), LocalTime.of(18, 0), LocalTime.of(20, 30),
            1, 1, stageId, 1000, 500, unniSongs
        );
 
-       // 2. 진행 중인 공연 (오늘, 현재 시간이 시작-종료 시간 사이)
-       Long concertId2 = getOrCreateConcert(
-           "아쿠아 단독 콘서트 \"I AM AQUA\"", 
+       // 2. 지난 공연 (어제)
+       Long pastConcert2 = getOrCreateConcert(
+           "아쿠아 단독 콘서트 \"AQUA BLUE\"", 
            minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
-           today,  // 오늘
-           currentTime.minusHours(1),  // 현재 시간 1시간 전 시작
-           currentTime.plusHours(1),   // 현재 시간 1시간 후 종료
-           1, 1, stageId, 1500, 400, aquaSongs
+           today.minusDays(1), LocalTime.of(14, 0), LocalTime.of(16, 30),
+           1, 1, stageId, 1200, 600, aquaSongs
        );
 
-       // 3. 예정된 공연 (내일)
-       Long concertId3 = getOrCreateConcert(
-           "이세계 아이돌 단독 콘서트 \"이세계 페스티벌\"", 
-           minioUrl + "/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png",
-           today.plusDays(1),  // 내일
-           LocalTime.of(12, 0),
-           LocalTime.of(21, 0),
-           1, 1, stageId, 2000, 1000, isekaiSongs
+       // 3. 진행 중인 공연 (현재)
+       Long ongoingConcert = getOrCreateConcert(
+           "유니 & 아쿠아 합동 콘서트 \"COLLABORATION\"", 
+           minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
+      
+           1, 1, stageId, 1800, 800, aquaSongs
        );
 
-       // 관람 이력 및 콜렉션 생성
-       createDummyCollection(audienceId, concertId1);
-       createDummyViewHistory(audienceId, concertId1);
+       // 4. 예정된 공연 (내일)
+       Long futureConcert1 = getOrCreateConcert(
+           "아쿠아 단독 콘서트 \"AQUA FESTIVAL\"", 
+           minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
+           today.plusDays(1), LocalTime.of(18, 0), LocalTime.of(21, 0),
+           1, 1, stageId, 2200, 1100, aquaSongs
+       );
 
-       createDummyCollection(audienceId, concertId2);
-       createDummyViewHistory(audienceId, concertId2);
+       // 5. 예정된 공연 (3일 후)
+       Long futureConcert2 = getOrCreateConcert(
+           "유니 단독 콘서트 \"UNNI UNIVERSE\"", 
+           minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
+           today.plusDays(3), LocalTime.of(19, 0), LocalTime.of(22, 0),
+           1, 1, stageId, 2000, 1000, unniSongs
+       );
 
-       createDummyCollection(audienceId, concertId3);
-       createDummyViewHistory(audienceId, concertId3);
+       // 모든 공연에 대한 관람 이력 및 콜렉션 생성
+       List<Long> allConcerts = List.of(
+           pastConcert1, pastConcert2, ongoingConcert, futureConcert1, futureConcert2
+       );
+
+       for (Long concertId : allConcerts) {
+           createDummyCollection(audienceId, concertId);
+           createDummyViewHistory(audienceId, concertId);
+       }
    }
 
     private Long createDummyUser(String email, String password, String userName, String userImg) {
