@@ -19,8 +19,10 @@ import com.outsider.virtual.user.command.domain.repository.UserCommandRepository
 import com.outsider.virtual.useractivity.command.application.service.ConcertCollectionService;
 import com.outsider.virtual.useractivity.command.application.service.ViewHistoryService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Configuration
+@Profile("dev")
 public class DummyConfig {
 
     private final ConcertCreateService concertService;
@@ -41,6 +44,9 @@ public class DummyConfig {
     private final ConcertRepository concertRepository;
     private final SongCreateService songCreateService;
     private final SongRepository songRepository;
+
+    @Value("${minio.url}")
+    private String minioUrl;
 
     @Autowired
     public DummyConfig(ConcertCreateService concertService, StageCreateService stageService,
@@ -64,19 +70,19 @@ public class DummyConfig {
    public void init() {
        // UNNI, AQUA, 이세계 아이돌 아티스트와 준혁쨩 유저 생성
        Long artistId1 = createDummyUser("unni@example.com", "1", "UNNI", 
-           "http://localhost:9000/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png");
+           minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png");
        Long artistId2 = createDummyUser("aqua@example.com", "1", "AQUA", 
-           "http://localhost:9000/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png");
+           minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png");
        Long artistId3 = createDummyUser("isekaiidol@example.com", "1", "이세계 아이돌", 
-           "http://localhost:9000/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png");
+           minioUrl + "/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png");
        Long artistId4 = createDummyUser("arin@example.com", "1", "아린", 
-           "http://localhost:9000/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
+           minioUrl + "/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
        Long audienceId = createDummyUser("junhyuk@example.com", "1", "준혁쨩", 
-           "http://localhost:9000/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
+           minioUrl + "/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
 
        // Stage가 이미 존재하는지 확인 후 생성
        Long stageId = getOrCreateStage("Main Stage", 1, 1, 1, 1, 
-           "http://localhost:9000/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
+           minioUrl + "/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png");
 
        // 각 아티스트의 노래 생성
        List<Long> unniSongs = createSongs(artistId1, "UNNI의 노래", 3);
@@ -91,7 +97,7 @@ public class DummyConfig {
        // 1. 지난 공연 (어제)
        Long concertId1 = getOrCreateConcert(
            "유니 단독 콘서트 \"HELLO UNNI\"", 
-           "http://localhost:9000/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
+           minioUrl + "/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
            today.minusDays(1),  // 어제
            LocalTime.of(18, 0),
            LocalTime.of(20, 30),
@@ -101,7 +107,7 @@ public class DummyConfig {
        // 2. 진행 중인 공연 (오늘, 현재 시간이 시작-종료 시간 사이)
        Long concertId2 = getOrCreateConcert(
            "아쿠아 단독 콘서트 \"I AM AQUA\"", 
-           "http://localhost:9000/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
+           minioUrl + "/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
            today,  // 오늘
            currentTime.minusHours(1),  // 현재 시간 1시간 전 시작
            currentTime.plusHours(1),   // 현재 시간 1시간 후 종료
@@ -111,7 +117,7 @@ public class DummyConfig {
        // 3. 예정된 공연 (내일)
        Long concertId3 = getOrCreateConcert(
            "이세계 아이돌 단독 콘서트 \"이세계 페스티벌\"", 
-           "http://localhost:9000/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png",
+           minioUrl + "/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png",
            today.plusDays(1),  // 내일
            LocalTime.of(12, 0),
            LocalTime.of(21, 0),

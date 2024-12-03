@@ -1,0 +1,28 @@
+server:
+  port: ${SERVER_PORT:8123}
+  ssl:
+    enabled: true
+    key-store: ${SSL_KEYSTORE}
+    key-store-password: ${SSL_PASSWORD}
+    key-store-type: PKCS12
+    key-alias: ${SSL_KEY_ALIAS}
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_USER_URL}
+    username: ${DB_USER_NAME}
+    password: ${DB_USER_PASSWORD}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+
+minio:
+  url: ${MINIO_SERVER_URL}
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey: ${MINIO_PASSWORD}
+  bucketName: ${MINIO_BUCKET_NAME} 

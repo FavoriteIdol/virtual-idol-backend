@@ -1,0 +1,22 @@
+server:
+  port: ${SERVER_PORT:8123}
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_USER_URL:jdbc:mysql://localhost:3307/virtual}
+    username: ${DB_USER_NAME:root}
+    password: ${DB_USER_PASSWORD:1234}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+minio:
+  url: ${MINIO_SERVER_URL:http://localhost:9000}
+  accessKey: ${MINIO_ACCESS_KEY:MY-USER}
+  secretKey: ${MINIO_PASSWORD:MY-PASSWORD}
+  bucketName: ${MINIO_BUCKET_NAME:virtual-files} 
