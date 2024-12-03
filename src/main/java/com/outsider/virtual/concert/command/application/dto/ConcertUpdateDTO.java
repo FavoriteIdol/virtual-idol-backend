@@ -14,4 +14,5 @@ public class ConcertUpdateDTO {
     private String ticketPrice;
     private String peopleScale;
     private List<Long> songIds;
+    private String img;
 }

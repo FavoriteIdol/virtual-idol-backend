@@ -1,5 +1,6 @@
 package com.outsider.virtual.concert.command.domain.aggregate;
 
+import com.outsider.virtual.song.command.domain.aggregate.Song;
 import com.outsider.virtual.util.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -27,6 +28,7 @@ public class ConcertSong extends BaseEntity {
     @JoinColumn(name = "concert_id")
     private Concert concert;
 
-    @Column(name = "song_id")
-    private Long songId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "song_id")
+    private Song song;
 } 

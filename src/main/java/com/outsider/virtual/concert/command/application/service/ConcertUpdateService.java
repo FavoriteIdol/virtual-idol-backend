@@ -49,6 +49,9 @@ public class ConcertUpdateService {
         if (dto.getSongIds() != null) {
             concert.updateSongs(dto.getSongIds());
         }
+        if (StringUtils.hasText(dto.getImg())) {
+            concert.setImg(dto.getImg());
+        }
 
         concertRepository.save(concert);
     }

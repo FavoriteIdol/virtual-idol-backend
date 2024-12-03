@@ -50,16 +50,15 @@ public class ConcertCommandController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+    @Operation(summary = "공연 수정", description = "공연 정보를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(
-            @PathVariable Long id,
-            @RequestBody ConcertUpdateDTO dto
-            , @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
-
-            concertUpdateService.update(userInfoDTO.getUserId(), id,dto);
-
-
-        return ResponseEntity.ok("성공적으로 업데이트되었습니다.");
+    public ResponseEntity<Void> update(
+        @PathVariable Long id,
+        @RequestBody ConcertUpdateDTO dto,
+        @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO
+    ) {
+        concertUpdateService.update(userInfoDTO.getUserId(), id, dto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

@@ -1,9 +1,12 @@
 package com.outsider.virtual.song.command.domain.aggregate;
 
+import com.outsider.virtual.concert.command.domain.aggregate.ConcertSong;
 import com.outsider.virtual.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,4 +29,13 @@ public class Song extends BaseEntity {
 
     @Column(name = "duration")
     private Integer duration;
+
+    @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConcertSong> concertSongs = new ArrayList<>();
+
+    public Song() {}
+
+    public Song(Long id) {
+        this.id = id;
+    }
 } 

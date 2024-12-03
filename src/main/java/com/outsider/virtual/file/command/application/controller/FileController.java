@@ -51,7 +51,7 @@ public class FileController {
                 .body(resource);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     @Operation(summary = "파일 삭제", description = "서버에서 파일을 삭제합니다.")
     public ResponseEntity<Void> deleteFile(@RequestParam("fileUrl") String fileUrl) {
         try {

@@ -1,5 +1,6 @@
 package com.outsider.virtual.concert.command.domain.aggregate;
 
+import com.outsider.virtual.song.command.domain.aggregate.Song;
 import com.outsider.virtual.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,14 +35,19 @@ public class Concert extends BaseEntity {
 
     @Column(name="concert_start_time")
     private LocalTime startTime;
+
     @Column(name="concert_end_time")
     private LocalTime endTime;
+
     @Column(name="appeared_vfx")
     private Integer appearedVFX;
+
     @Column(name="fever_vfx")
     private Integer feverVFX;
+
     @Column(name="user_id")
     private Long userId;
+
     @Column(name="stage_id")
     private Long stageId;
 
@@ -65,15 +71,10 @@ public class Concert extends BaseEntity {
             Set<Long> uniqueSongIds = new HashSet<>(songIds);
             
             uniqueSongIds.forEach(songId -> {
-                boolean exists = this.songs.stream()
-                    .anyMatch(song -> song.getSongId().equals(songId));
-                
-                if (!exists) {
-                    ConcertSong concertSong = new ConcertSong();
-                    concertSong.setConcert(this);
-                    concertSong.setSongId(songId);
-                    this.songs.add(concertSong);
-                }
+                ConcertSong concertSong = new ConcertSong();
+                concertSong.setConcert(this);
+                concertSong.setSong(new Song(songId));
+                this.songs.add(concertSong);
             });
         }
     }
@@ -83,7 +84,7 @@ public class Concert extends BaseEntity {
             return new ArrayList<>();
         }
         return this.songs.stream()
-            .map(ConcertSong::getSongId)
+            .map(song -> song.getSong().getId())
             .collect(Collectors.toList());
     }
 

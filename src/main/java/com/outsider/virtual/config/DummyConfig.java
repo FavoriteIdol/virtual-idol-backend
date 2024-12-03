@@ -84,31 +84,39 @@ public class DummyConfig {
        List<Long> isekaiSongs = createSongs(artistId3, "이세계 아이돌의 노래", 3);
        List<Long> arinSongs = createSongs(artistId4, "아린의 노래", 3);
 
-       // Concert 더미 데이터 생성 (songIds 포함)
-       Long concertId1 = getOrCreateConcert("유니 단독 콘서트 \"HELLO UNNI\"", 
+       // 현재 시간 기준으로 날짜 설정
+       LocalDate today = LocalDate.now();
+       LocalTime currentTime = LocalTime.now();
+
+       // 1. 지난 공연 (어제)
+       Long concertId1 = getOrCreateConcert(
+           "유니 단독 콘서트 \"HELLO UNNI\"", 
            "http://localhost:9000/virtual-files/0190659f-8626-46a5-bcbf-b2f5b435e9d6.png",
-           LocalDate.of(2024, 10, 31), LocalTime.of(18, 0), LocalTime.of(20, 30),
-           1, 1, stageId, 1000, 500, unniSongs);
+           today.minusDays(1),  // 어제
+           LocalTime.of(18, 0),
+           LocalTime.of(20, 30),
+           1, 1, stageId, 1000, 500, unniSongs
+       );
 
-       Long concertId2 = getOrCreateConcert("아쿠아 단독 콘서트 \"I AM AQUA\"", 
+       // 2. 진행 중인 공연 (오늘, 현재 시간이 시작-종료 시간 사이)
+       Long concertId2 = getOrCreateConcert(
+           "아쿠아 단독 콘서트 \"I AM AQUA\"", 
            "http://localhost:9000/virtual-files/05cbab12-23b3-443b-bf7f-da45792124b3.png",
-           LocalDate.of(2024, 11, 11), LocalTime.of(14, 0), LocalTime.of(15, 0),
-           1, 1, stageId, 1500, 400, aquaSongs);
+           today,  // 오늘
+           currentTime.minusHours(1),  // 현재 시간 1시간 전 시작
+           currentTime.plusHours(1),   // 현재 시간 1시간 후 종료
+           1, 1, stageId, 1500, 400, aquaSongs
+       );
 
-       Long concertId3 = getOrCreateConcert("이세계 아이돌 단독 콘서트 \"이세계 페스티벌\"", 
+       // 3. 예정된 공연 (내일)
+       Long concertId3 = getOrCreateConcert(
+           "이세계 아이돌 단독 콘서트 \"이세계 페스티벌\"", 
            "http://localhost:9000/virtual-files/a6387c64-958e-4b05-837e-ff6ee0eb0c67.png",
-           LocalDate.of(2023, 9, 23), LocalTime.of(12, 0), LocalTime.of(21, 0),
-           1, 1, stageId, 2000, 1000, isekaiSongs);
-
-       Long concertId4 = getOrCreateConcert("아쿠아 단독 콘서트 \"PURPLELAR\"", 
-           "http://localhost:9000/virtual-files/ba9ce80f-6b83-4786-8c90-16af229e813d.png",
-           LocalDate.of(2024, 11, 14), LocalTime.of(11, 0), LocalTime.of(12, 0),
-           1, 1, stageId, 1200, 300, arinSongs);
-       // 아린 단독 콘서트 추가
-       Long concertId5 = getOrCreateConcert("아린 단독 콘서트 \"STARLIGHT ARIN\"", 
-           "http://localhost:9000/virtual-files/d431da4f-deee-48cd-bd4e-8c23ee40db9f.png",
-           LocalDate.of(2024, 11, 28), LocalTime.of(19, 0), LocalTime.of(21, 30),
-           2, 2, stageId, 2000, 800, createSongs(artistId4, "아린의 노래", 3));
+           today.plusDays(1),  // 내일
+           LocalTime.of(12, 0),
+           LocalTime.of(21, 0),
+           1, 1, stageId, 2000, 1000, isekaiSongs
+       );
 
        // 관람 이력 및 콜렉션 생성
        createDummyCollection(audienceId, concertId1);
@@ -119,12 +127,6 @@ public class DummyConfig {
 
        createDummyCollection(audienceId, concertId3);
        createDummyViewHistory(audienceId, concertId3);
-
-       createDummyCollection(audienceId, concertId4);
-       createDummyViewHistory(audienceId, concertId4);
-
-       createDummyCollection(audienceId, concertId5); // 아린 콘서트 관람 이력 추가
-       createDummyViewHistory(audienceId, concertId5); // 아린 콘서트 관람 기록 추가
    }
 
     private Long createDummyUser(String email, String password, String userName, String userImg) {
