@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,20 +22,21 @@ public class ConcertCollectionService {
     private final UserCommandRepository userCommandRepository;
     private final ConcertRepository concertRepository;
 
-
     @Transactional
     public Long collectConcert(Long userId, Long concertId) {
+        // 이미 수집한 콘서트인지 확인
+        Optional<ConcertCollection> existingCollection = 
+            concertCollectionRepository.findByUserIdAndConcertId(userId, concertId);
+        if (existingCollection.isPresent()) {
+            return existingCollection.get().getId();
+        }
+
         // 사용자와 콘서트가 존재하는지 검증
         User user = userCommandRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
         Concert concert = concertRepository.findById(concertId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid concert ID: " + concertId));
-
-        // 시청 시간이 충분한지 확인
-//        if (!hasWatchedForRequiredDuration(userId, concertId)) {
-//            throw new IllegalStateException("User has not watched the concert long enough to collect.");
-//        }
 
         // 콘서트 수집 생성
         ConcertCollection collection = new ConcertCollection();

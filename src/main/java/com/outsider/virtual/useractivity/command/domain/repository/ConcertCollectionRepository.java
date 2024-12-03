@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ConcertCollectionRepository extends JpaRepository<ConcertCollection, Long>  {
     List<ConcertCollection> findByUserId(Long userId);
@@ -22,6 +23,8 @@ public interface ConcertCollectionRepository extends JpaRepository<ConcertCollec
             "FROM ConcertCollection c " +
             "WHERE c.user.id = :userId")
     Page<CollectionDTO> findUserCollections(@Param("userId") Long userId, Pageable pageable);
+
+    Optional<ConcertCollection> findByUserIdAndConcertId(Long userId, Long concertId);
 
 }
 
