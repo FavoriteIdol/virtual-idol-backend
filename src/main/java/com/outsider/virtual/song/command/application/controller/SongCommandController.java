@@ -25,10 +25,8 @@ public class SongCommandController {
     @Operation(summary = "노래 등록", description = "새로운 노래를 등록합니다.")
     public ResponseEntity<Long> register(
             @RequestBody SongCreateDTO dto,
-            @RequestParam Long concertId,
             @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
         dto.setArtistId(userInfoDTO.getUserId());
-        dto.setConcertId(concertId);
         Long songId = songCreateService.register(dto);
         return ResponseEntity.ok(songId);
     }
