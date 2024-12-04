@@ -17,7 +17,8 @@ public class SongQueryService {
         this.songQueryRepository = songQueryRepository;
     }
 
-    public List<SongDTO> getSongsByUserId(Long userId) {
-        return songQueryRepository.findSongsByUserId(userId);
+
+    public List<SongDTO> getSongsByConcertIdAndArtistId(Long concertId, Long artistId) {
+        return songQueryRepository.findByConcertIdAndArtistId(concertId, artistId);
     }
 } 

@@ -24,8 +24,8 @@ public class Song extends BaseEntity {
     @Column(name = "artist_id")
     private Long artistId;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "concert_id")
+    private Long concertId;
 
     @Column(name = "duration")
     private Integer duration;

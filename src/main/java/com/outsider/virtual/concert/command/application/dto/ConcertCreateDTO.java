@@ -42,6 +42,4 @@ public class ConcertCreateDTO {
     @Schema(description = "사람 규모", example = "30")
     private Integer peopleScale;
 
-    @Schema(description = "노래 ID 목록", example = "[1, 2, 3]")
-    private List<Long> songIds;
 }

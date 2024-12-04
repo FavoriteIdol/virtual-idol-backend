@@ -2,6 +2,7 @@ package com.outsider.virtual.song.query.application.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,9 +28,12 @@ public class SongQueryController {
         this.songQueryService = songQueryService;
     }
 
-    @Operation(summary = "내 노래 목록 조회", description = "현재 로그인한 사용자의 노래 목록을 조회합니다.")
-    @GetMapping("/my-songs")
-    public ResponseEntity<List<SongDTO>> getMySongs(@Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO) {
-        return ResponseEntity.ok(songQueryService.getSongsByUserId(userInfoDTO.getUserId()));
+    @Operation(summary = "공연의 노래 목록 조회", description = "특정 공연의 노래 목록을 조회합니다.")
+    @GetMapping("/concert/{concertId}")
+    public ResponseEntity<List<SongDTO>> getSongsByConcertId(
+        @PathVariable Long concertId,
+        @Parameter(hidden = true) @UserId CustomUserInfoDTO userInfoDTO
+    ) {
+        return ResponseEntity.ok(songQueryService.getSongsByConcertIdAndArtistId(concertId, userInfoDTO.getUserId()));
     }
 } 

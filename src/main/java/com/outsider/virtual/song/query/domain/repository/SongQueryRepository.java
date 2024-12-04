@@ -14,6 +14,9 @@ public interface SongQueryRepository extends JpaRepository<Song, Long> {
     
     @Query("SELECT new com.outsider.virtual.song.query.application.dto.SongDTO(s.id, s.title, s.artistId, s.url) " +
            "FROM Song s " +
-           "WHERE s.artistId = :userId")
-    List<SongDTO> findSongsByUserId(@Param("userId") Long userId);
+           "WHERE s.concertId = :concertId AND s.artistId = :artistId")
+    List<SongDTO> findByConcertIdAndArtistId(
+        @Param("concertId") Long concertId, 
+        @Param("artistId") Long artistId
+    );
 } 

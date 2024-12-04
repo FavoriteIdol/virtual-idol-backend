@@ -14,6 +14,9 @@ public class SongCreateDTO {
     @Schema(hidden = true)
     private Long artistId;
 
+    @Schema(hidden = true)
+    private Long concertId;
+
     @Schema(description = "재생 시간(초)", example = "180")
     private Integer duration;
 } 
