@@ -38,8 +38,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-
-      ddl-auto: create
+      ddl-auto:  ${DDL_AUTO}
 
 jwt:
   expiration_time: 86400000 #1일
