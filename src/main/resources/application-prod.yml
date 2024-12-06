@@ -1,7 +1,7 @@
 server:
   port: ${SERVER_PORT:8123}
   ssl:
-    enabled: true
+    enabled: ${SSL_ENABLE}
     key-store: ${SSL_KEYSTORE}
     key-store-password: ${SSL_PASSWORD}
     key-store-type: PKCS12
