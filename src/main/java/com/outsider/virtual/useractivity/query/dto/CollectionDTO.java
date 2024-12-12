@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 public class CollectionDTO {
@@ -14,15 +15,17 @@ public class CollectionDTO {
     private Long concertId;
     private String concertName;
     private String concertImage;
-    private LocalDateTime collectedDate;
+    private LocalDate concertDate;
+    private LocalTime startTime;
     private String artist;
     private String audience;
 
-    public CollectionDTO(Long concertId, String concertName, String concertImage, LocalDateTime collectedDate,String artist,String audience) {
+    public CollectionDTO(Long concertId, String concertName, String concertImage, LocalDate concertDate, LocalTime startTime, String artist, String audience) {
         this.concertId = concertId;
         this.concertName = concertName;
         this.concertImage = concertImage;
-        this.collectedDate = collectedDate;
+        this.concertDate = concertDate;
+        this.startTime = startTime;
         this.artist = artist;
         this.audience = audience;
     }
