@@ -83,7 +83,8 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://tripleyoung.synology.me:3334");
         configuration.addAllowedOrigin("https://virtual-idol-concert-frontend.vercel.app");
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("http://localhost:3001");
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("http://back.reward-factory.shop:8123");
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
