@@ -20,10 +20,13 @@ public class SongCreateService {
 
     @Transactional
     public Long register(SongCreateDTO dto) {
-        songRepository.findByTitleAndArtistId(dto.getTitle(), dto.getArtistId())
-            .ifPresent(s -> {
-                throw new IllegalStateException("이미 존재하는 노래입니다.");
-            });
+        songRepository.findByTitleAndArtistIdAndConcertId(
+            dto.getTitle(), 
+            dto.getArtistId(), 
+            dto.getConcertId()
+        ).ifPresent(s -> {
+            throw new IllegalStateException("이미 해당 콘서트에 존재하는 노래입니다.");
+        });
 
         Song song = songCreateMapper.toEntity(dto);
         song = songRepository.save(song);
