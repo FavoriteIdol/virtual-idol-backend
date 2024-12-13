@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -59,16 +61,27 @@ public class ConcertUpdateService {
         if (StringUtils.hasText(dto.getPeopleScale())) {
             concert.setPeopleScale(dto.getPeopleScale());
         }
-        if (dto.getSongIds() != null) {
+        if (dto.getSongIds() != null && !dto.getSongIds().isEmpty()) {
             // 기존 ConcertSong 관계 모두 제거
             concertSongRepository.deleteAllByConcertId(id);
             
-            // 새로운 Song 관계 추가
+            // 존재하지 않는 Song ID 찾기
             List<Song> songs = songRepository.findAllById(dto.getSongIds());
-            if (songs.size() != dto.getSongIds().size()) {
-                throw new IllegalArgumentException("일부 Song이 존재하지 않습니다.");
+            Set<Long> foundSongIds = songs.stream()
+                .map(Song::getId)
+                .collect(Collectors.toSet());
+            
+            List<Long> notFoundSongIds = dto.getSongIds().stream()
+                .filter(songId -> !foundSongIds.contains(songId))
+                .collect(Collectors.toList());
+            
+            if (!notFoundSongIds.isEmpty()) {
+                throw new IllegalArgumentException(
+                    String.format("다음 ID를 가진 노래들이 존재하지 않습니다: %s", notFoundSongIds)
+                );
             }
             
+            // 새로운 ConcertSong 관계 생성
             songs.forEach(song -> {
                 ConcertSong concertSong = new ConcertSong(concert, song);
                 concertSongRepository.save(concertSong);

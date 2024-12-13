@@ -5,4 +5,5 @@ import com.outsider.virtual.concert.command.domain.aggregate.ConcertSong;
 
 public interface ConcertSongRepository extends JpaRepository<ConcertSong, Long> {
     void deleteAllByConcertId(Long concertId);
+    void deleteBySongId(Long songId);
 } 

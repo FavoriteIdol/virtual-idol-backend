@@ -3,6 +3,7 @@ package com.outsider.virtual.song.command.application.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.outsider.virtual.concert.command.domain.repository.ConcertSongRepository;
 import com.outsider.virtual.file.command.application.service.MinioService;
 import com.outsider.virtual.song.command.domain.aggregate.Song;
 import com.outsider.virtual.song.command.domain.repository.SongRepository;
@@ -12,10 +13,15 @@ import com.outsider.virtual.user.exception.NotMineException;
 @Transactional
 public class SongDeleteService {
     private final SongRepository songRepository;
+    private final ConcertSongRepository concertSongRepository;
     private final MinioService minioService;
 
-    public SongDeleteService(SongRepository songRepository, MinioService minioService) {
+    public SongDeleteService(
+            SongRepository songRepository,
+            ConcertSongRepository concertSongRepository,
+            MinioService minioService) {
         this.songRepository = songRepository;
+        this.concertSongRepository = concertSongRepository;
         this.minioService = minioService;
     }
 
@@ -23,16 +29,17 @@ public class SongDeleteService {
         Song song = songRepository.findById(songId)
             .orElseThrow(() -> new IllegalArgumentException("Song not found"));
 
-        // 권한 체크
         if (!song.getArtistId().equals(userId)) {
             throw new NotMineException();
         }
 
-        // 파일 URL 저장
         String fileUrl = song.getUrl();
 
         try {
-            // 먼저 Song 엔티티 삭제
+            // ConcertSong 관계 먼저 삭제
+            concertSongRepository.deleteBySongId(songId);
+            
+            // Song 엔티티 삭제
             songRepository.delete(song);
             
             // 파일 삭제

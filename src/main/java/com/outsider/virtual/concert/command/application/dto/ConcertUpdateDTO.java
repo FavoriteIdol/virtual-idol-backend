@@ -15,4 +15,18 @@ public class ConcertUpdateDTO {
     private String peopleScale;
     private List<Long> songIds;
     private String img;
+
+    @Override
+    public String toString() {
+        return "ConcertUpdateDTO{" +
+            "name='" + name + '\'' +
+            ", concertDate=" + concertDate +
+            ", startTime=" + startTime +
+            ", endTime=" + endTime +
+            ", ticketPrice='" + ticketPrice + '\'' +
+            ", peopleScale='" + peopleScale + '\'' +
+            ", songIds=" + songIds +
+            ", img='" + img + '\'' +
+            '}';
+    }
 }
