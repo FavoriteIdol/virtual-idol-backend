@@ -60,25 +60,6 @@ public class Concert extends BaseEntity {
     @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConcertSong> songs = new ArrayList<>();
 
-    public void updateSongs(List<Long> songIds) {
-        if (this.songs == null) {
-            this.songs = new ArrayList<>();
-        }
-        
-        this.songs.clear();
-        
-        if (songIds != null) {
-            Set<Long> uniqueSongIds = new HashSet<>(songIds);
-            
-            uniqueSongIds.forEach(songId -> {
-                ConcertSong concertSong = new ConcertSong();
-                concertSong.setConcert(this);
-                concertSong.setSong(new Song(songId));
-                this.songs.add(concertSong);
-            });
-        }
-    }
-
     public List<Long> getSongIds() {
         if (this.songs == null) {
             return new ArrayList<>();
