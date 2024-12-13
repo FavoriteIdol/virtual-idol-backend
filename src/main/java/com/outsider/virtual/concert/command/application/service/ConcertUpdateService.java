@@ -62,16 +62,25 @@ public class ConcertUpdateService {
             concert.setPeopleScale(dto.getPeopleScale());
         }
         if (dto.getSongIds() != null && !dto.getSongIds().isEmpty()) {
+            // null 값 필터링
+            List<Long> validSongIds = dto.getSongIds().stream()
+                .filter(songId -> songId != null)
+                .collect(Collectors.toList());
+
+            if (validSongIds.isEmpty()) {
+                return;  // 유효한 songId가 없으면 처리하지 않음
+            }
+
             // 기존 ConcertSong 관계 모두 제거
             concertSongRepository.deleteAllByConcertId(id);
             
             // 존재하지 않는 Song ID 찾기
-            List<Song> songs = songRepository.findAllById(dto.getSongIds());
+            List<Song> songs = songRepository.findAllById(validSongIds);
             Set<Long> foundSongIds = songs.stream()
                 .map(Song::getId)
                 .collect(Collectors.toSet());
             
-            List<Long> notFoundSongIds = dto.getSongIds().stream()
+            List<Long> notFoundSongIds = validSongIds.stream()
                 .filter(songId -> !foundSongIds.contains(songId))
                 .collect(Collectors.toList());
             
