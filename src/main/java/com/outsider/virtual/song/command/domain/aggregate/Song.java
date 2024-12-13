@@ -30,10 +30,10 @@ public class Song extends BaseEntity {
     @Column(name = "duration")
     private Integer duration;
 
-    @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "song")
     private List<ConcertSong> concertSongs = new ArrayList<>();
 
-    public Song() {}
+    protected Song() {}
 
     public Song(Long id) {
         this.id = id;

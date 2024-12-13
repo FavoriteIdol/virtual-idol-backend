@@ -31,4 +31,14 @@ public class ConcertSong extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id")
     private Song song;
+
+    protected ConcertSong() {}
+
+    public ConcertSong(Concert concert, Song song) {
+        if (concert == null || song == null) {
+            throw new IllegalArgumentException("Concert와 Song은 null이 될 수 없습니다.");
+        }
+        this.concert = concert;
+        this.song = song;
+    }
 } 
