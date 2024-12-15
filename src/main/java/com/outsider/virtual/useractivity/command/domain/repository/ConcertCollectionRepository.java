@@ -26,6 +26,8 @@ public interface ConcertCollectionRepository extends JpaRepository<ConcertCollec
     Page<CollectionDTO> findUserCollections(@Param("userId") Long userId, Pageable pageable);
 
     Optional<ConcertCollection> findByUserIdAndConcertId(Long userId, Long concertId);
+    @Transactional
+    void deleteByConcertId(Long concertId);
 
 }
 
